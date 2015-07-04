@@ -116,21 +116,21 @@ class WeatherSegment(KwThreadedSegment):
 		except KeyError:
 			if location_query is None:
 				location_data = json.loads(urllib_read('http://freegeoip.net/json/'))
-				location = ','.join((
+				self.location = ','.join((
 					location_data['city'],
 					location_data['region_name'],
 					location_data['country_code']
 				))
-				self.info('Location returned by freegeoip is {0}', location)
+				self.info('Location returned by freegeoip is {0}', self.location)
 			else:
-				location = location_query
+				self.location = location_query
 			query_data = {
 				'q':
 				'use "https://raw.githubusercontent.com/yql/yql-tables/master/weather/weather.bylocation.xml" as we;'
-				'select * from we where location="{0}" and unit="c"'.format(location).encode('utf-8'),
+				'select * from we where location="{0}" and unit="c"'.format(self.location).encode('utf-8'),
 				'format': 'json',
 			}
-			self.location_urls[location_query] = url = (
+			self.location_urls[self.location] = url = (
 				'http://query.yahooapis.com/v1/public/yql?' + urllib_urlencode(query_data))
 			return url
 
